@@ -1,4 +1,5 @@
-import Link from "next/link";
+import Link
+  from "next/link";
 
 export default function Nav({
   active = "home"
@@ -6,17 +7,41 @@ export default function Nav({
   active?: string;
 }) {
   const links = [
-    ["home", "/", "Home"],
-    ["rider", "/rider", "Rider"],
-    ["driver", "/driver", "Driver"],
-    ["admin", "/admin", "Admin"]
+    [
+      "home",
+      "/",
+      "Home"
+    ],
+
+    [
+      "rider",
+      "/rider",
+      "Rider"
+    ],
+
+    [
+      "driver",
+      "/driver",
+      "Driver"
+    ],
+
+    [
+      "admin",
+      "/admin",
+      "Admin"
+    ]
   ];
 
   return (
     <header className="nav">
 
-      <Link href="/" className="brand">
-        <div className="logo">R</div>
+      <Link
+        href="/"
+        className="brand"
+      >
+        <div className="logo">
+          R
+        </div>
 
         <div>
           <div className="brandName">
@@ -30,21 +55,46 @@ export default function Nav({
       </Link>
 
       <nav className="navLinks">
-        {links.map(
-          ([key, href, label]) => (
-            <Link
-              key={key}
-              href={href}
-              className={
-                active === key
-                  ? "navPill active"
-                  : "navPill"
-              }
-            >
-              {label}
-            </Link>
+
+        {
+          links.map(
+            ([
+              key,
+              href,
+              label
+            ]) => (
+              <Link
+                key={key}
+
+                href={href}
+
+                className={
+                  active ===
+                  key
+                    ? "navPill active"
+                    : "navPill"
+                }
+              >
+                {label}
+              </Link>
+            )
           )
-        )}
+        }
+
+        <Link
+          href="/auth/login"
+          className="navPill"
+        >
+          Sign in
+        </Link>
+
+        <Link
+          href="/auth/signup"
+          className="navPill"
+        >
+          Join
+        </Link>
+
       </nav>
 
     </header>

@@ -21,10 +21,18 @@ enum UserStatus {
 }
 
 enum VerificationStatus {
+  NOT_SUBMITTED
   PENDING
   APPROVED
   REJECTED
   EXPIRED
+}
+
+enum PayoutMethod {
+  BANK
+  INSTANT_FIAT
+  USDC
+  PYUSD
 }
 
 enum RideStatus {
@@ -47,13 +55,6 @@ enum PaymentMethod {
   RIDE_BALANCE
 }
 
-enum PayoutMethod {
-  BANK
-  INSTANT_FIAT
-  USDC
-  PYUSD
-}
-
 enum SafetySeverity {
   LOW
   MEDIUM
@@ -69,9 +70,9 @@ model User {
   firstName       String
   lastName        String
 
-  email           String?     @unique
+  email           String      @unique
   phone           String?     @unique
-  passwordHash    String?
+  passwordHash    String
 
   avatarUrl       String?
 
@@ -79,7 +80,7 @@ model User {
   ratingCount     Int         @default(0)
   ridesCompleted  Int         @default(0)
 
-  identityStatus  VerificationStatus @default(PENDING)
+  identityStatus  VerificationStatus @default(NOT_SUBMITTED)
 
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -87,41 +88,52 @@ model User {
   riderProfile    RiderProfile?
   driverProfile   DriverProfile?
 
-  riderRides      Ride[]      @relation("RiderRides")
-  driverRides     Ride[]      @relation("DriverRides")
+  riderRides      Ride[] @relation("RiderRides")
+  driverRides     Ride[] @relation("DriverRides")
 
-  ratingsGiven    Rating[]    @relation("RatingsGiven")
-  ratingsReceived Rating[]    @relation("RatingsReceived")
+  ratingsGiven    Rating[] @relation("RatingsGiven")
+  ratingsReceived Rating[] @relation("RatingsReceived")
 
   safetyEvents    SafetyEvent[]
   paymentMethods  StoredPaymentMethod[]
 
   wallet          Wallet?
   notifications   Notification[]
+
+  @@index([role])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model RiderProfile {
-  userId          String  @id
-  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String @id
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  emergencyName   String?
-  emergencyPhone  String?
+  emergencyName    String?
+  emergencyPhone   String?
 
-  riderPinEnabled Boolean @default(true)
+  preferredTier    String @default("STANDARD")
+  riderPinEnabled  Boolean @default(true)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model DriverProfile {
   userId              String @id
   user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  onboardingComplete  Boolean @default(false)
+
   online              Boolean @default(false)
   acceptingRides      Boolean @default(false)
 
-  backgroundStatus    VerificationStatus @default(PENDING)
-  licenseStatus       VerificationStatus @default(PENDING)
-  insuranceStatus     VerificationStatus @default(PENDING)
-  vehicleStatus       VerificationStatus @default(PENDING)
-  inspectionStatus    VerificationStatus @default(PENDING)
+  identityStatus      VerificationStatus @default(NOT_SUBMITTED)
+  backgroundStatus    VerificationStatus @default(NOT_SUBMITTED)
+  licenseStatus       VerificationStatus @default(NOT_SUBMITTED)
+  insuranceStatus     VerificationStatus @default(NOT_SUBMITTED)
+  vehicleStatus       VerificationStatus @default(NOT_SUBMITTED)
+  inspectionStatus    VerificationStatus @default(NOT_SUBMITTED)
 
   payoutMethod        PayoutMethod @default(BANK)
   payoutDestination   String?
@@ -136,6 +148,9 @@ model DriverProfile {
   vehicles            Vehicle[]
   documents           DriverDocument[]
   payouts             Payout[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model DriverLicense {
@@ -152,23 +167,37 @@ model DriverLicense {
   backImageUrl   String?
 
   status         VerificationStatus @default(PENDING)
+
   verifiedAt     DateTime?
+  reviewedBy     String?
+  rejectionNote  String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model DriverDocument {
-  id         String @id @default(cuid())
+  id           String @id @default(cuid())
 
-  driverId   String
-  driver     DriverProfile @relation(fields: [driverId], references: [userId], onDelete: Cascade)
+  driverId     String
+  driver       DriverProfile @relation(fields: [driverId], references: [userId], onDelete: Cascade)
 
-  type       String
-  fileUrl    String
+  type         String
+  fileUrl      String
 
-  status     VerificationStatus @default(PENDING)
-  expiresAt  DateTime?
-  reviewedAt DateTime?
+  status       VerificationStatus @default(PENDING)
 
-  createdAt  DateTime @default(now())
+  expiresAt    DateTime?
+
+  reviewedAt   DateTime?
+  reviewedBy   String?
+  rejectionNote String?
+
+  createdAt    DateTime @default(now())
+
+  @@index([driverId])
+  @@index([type])
+  @@index([status])
 }
 
 model Vehicle {
@@ -195,18 +224,25 @@ model Vehicle {
   inspectionStatus   VerificationStatus @default(PENDING)
 
   active             Boolean @default(false)
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([driverId])
 }
 
 model Ride {
   id                  String @id @default(cuid())
 
   riderId             String
-  rider               User   @relation("RiderRides", fields: [riderId], references: [id])
+  rider               User @relation("RiderRides", fields: [riderId], references: [id])
 
   driverId            String?
-  driver              User?  @relation("DriverRides", fields: [driverId], references: [id])
+  driver              User? @relation("DriverRides", fields: [driverId], references: [id])
 
   status              RideStatus @default(REQUESTED)
+
+  tier                String @default("STANDARD")
 
   pickupLabel         String
   pickupLat           Float
@@ -241,13 +277,18 @@ model Ride {
   ledgerEntries       LedgerEntry[]
   ratings             Rating[]
   safetyEvents        SafetyEvent[]
+
+  @@index([riderId])
+  @@index([driverId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model LedgerEntry {
   id                String @id @default(cuid())
 
   rideId            String?
-  ride              Ride?  @relation(fields: [rideId], references: [id])
+  ride              Ride? @relation(fields: [rideId], references: [id])
 
   userId            String?
 
@@ -266,6 +307,7 @@ model LedgerEntry {
 
   @@index([rideId])
   @@index([userId])
+  @@index([type])
 }
 
 model Wallet {
@@ -280,6 +322,10 @@ model Wallet {
 
   rideBalance Decimal @default(0) @db.Decimal(36,18)
   usdcBalance Decimal @default(0) @db.Decimal(36,18)
+  pyusdBalance Decimal @default(0) @db.Decimal(36,18)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model StoredPaymentMethod {
@@ -297,6 +343,8 @@ model StoredPaymentMethod {
   isDefault   Boolean @default(false)
 
   createdAt   DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Payout {
@@ -317,6 +365,9 @@ model Payout {
 
   createdAt   DateTime @default(now())
   completedAt DateTime?
+
+  @@index([driverId])
+  @@index([status])
 }
 
 model Rating {
@@ -335,6 +386,8 @@ model Rating {
   comment    String?
 
   createdAt  DateTime @default(now())
+
+  @@index([toUserId])
 }
 
 model SafetyEvent {
@@ -356,6 +409,11 @@ model SafetyEvent {
   resolvedAt  DateTime?
 
   createdAt   DateTime @default(now())
+
+  @@index([rideId])
+  @@index([userId])
+  @@index([severity])
+  @@index([resolved])
 }
 
 model Notification {
@@ -371,6 +429,9 @@ model Notification {
   read      Boolean @default(false)
 
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([read])
 }
 
 model PlatformSetting {

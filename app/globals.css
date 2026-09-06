@@ -678,3 +678,44 @@ select {
     min-height: 390px;
   }
 }
+
+/* ==================================================
+   RideFi Account / Admin UI additions
+   ================================================== */
+
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+input,
+select {
+  transition:
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.tableRow[href] {
+  transition:
+    transform .12s ease,
+    border-color .12s ease,
+    background .12s ease;
+}
+
+.tableRow[href]:hover {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    #48422b;
+
+  background:
+    #10100d;
+}
+
+@media (max-width: 700px) {
+  .tableRow {
+    min-width:
+      680px;
+  }
+}

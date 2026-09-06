@@ -1,6 +1,4 @@
-import {
-  PrismaClient
-} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma =
   globalThis as unknown as {
@@ -8,7 +6,7 @@ const globalForPrisma =
   };
 
 export const db =
-  globalForPrisma.prisma ||
+  globalForPrisma.prisma ??
   new PrismaClient();
 
 if (
