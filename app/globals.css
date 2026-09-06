@@ -3549,3 +3549,110 @@ button{
   }
 
 }
+
+/* ==========================================================
+   MOBILE MAP OVERLAY FIX
+   Rochester + destination card collision
+   ========================================================== */
+
+@media (max-width:900px){
+
+  /* Keep city label isolated in the upper-right */
+  .riderMapTitle{
+    top:16px;
+    right:16px;
+
+    z-index:40;
+
+    max-width:145px;
+
+    padding:9px 11px;
+
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:13px;
+
+    background:rgba(9,9,9,.88);
+
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+
+    text-align:right;
+
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.28);
+  }
+
+  .riderMapTitle span{
+    display:block;
+
+    font-size:18px;
+    line-height:1;
+
+    letter-spacing:-1px;
+  }
+
+  /* The map already has the LIVE / nearby pill,
+     so don't repeat that text beside Rochester on mobile. */
+  .riderMapTitle strong{
+    display:none;
+  }
+
+  /* Push destination marker away from Rochester */
+  .riderMap .destinationPin{
+    top:92px;
+    right:16px;
+
+    max-width:150px;
+  }
+
+  .riderMap .destinationPin div{
+    padding:7px 9px;
+
+    max-width:125px;
+  }
+
+  .riderMap .destinationPin strong{
+    font-size:9px;
+
+    white-space:nowrap;
+  }
+
+  /* Give LIVE pill breathing room */
+  .riderMap .mapHud{
+    top:16px;
+    left:16px;
+
+    max-width:190px;
+  }
+}
+
+@media (max-width:480px){
+
+  .riderMapTitle{
+    top:15px;
+    right:14px;
+
+    max-width:125px;
+
+    padding:8px 10px;
+  }
+
+  .riderMapTitle span{
+    font-size:16px;
+  }
+
+  .riderMap .destinationPin{
+    top:82px;
+    right:14px;
+
+    transform:scale(.92);
+    transform-origin:top right;
+  }
+
+  .riderMap .mapHud{
+    left:14px;
+
+    padding:7px 9px;
+  }
+
+}
