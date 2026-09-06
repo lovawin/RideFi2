@@ -1,88 +1,93 @@
 import Link from "next/link";
 
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  CircleDollarSign,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  WalletCards
+} from "lucide-react";
+
 import Nav from "@/components/Nav";
+import BottomNav from "@/components/ui/BottomNav";
+import VisualMap from "@/components/ui/VisualMap";
 
 export default function Home() {
   return (
-    <main className="shell">
+    <main className="siteShell">
 
       <Nav active="home" />
 
-      <section className="hero">
+      <section className="heroV2">
 
-        <div className="card heroCopy">
+        <div className="heroCopyV2">
 
-          <div className="kicker">
-            Driver-first rideshare
+          <div className="eyebrow">
+            <Sparkles size={13} />
+
+            RIDESHARE, REBUILT
           </div>
 
-          <h1 className="heroTitle">
-            Cheaper rides.
-            Bigger payouts.
-            Crypto underneath.
+          <h1>
+            KEEP MORE.
+            <br />
+
+            <span>
+              PAY LESS.
+            </span>
           </h1>
 
-          <p className="heroText">
-            Riders can pay with card,
-            debit, PayPal or crypto.
-
-            RideFi handles $RIDE behind
-            the scenes while drivers choose
-            fiat, USDC or PYUSD payouts.
+          <p>
+            A driver-first rideshare network
+            where normal payments meet
+            programmable money underneath.
           </p>
 
-          <div className="actions">
+          <div className="heroActions">
 
             <Link
-              className="primary"
               href="/rider"
+              className="megaButton"
             >
-              Book a ride
+              Get a ride
+
+              <ArrowRight size={19} />
             </Link>
 
             <Link
-              className="secondary"
               href="/driver"
+              className="ghostButton"
             >
-              Drive with RideFi
-            </Link>
-
-            <Link
-              className="secondary"
-              href="/admin"
-            >
-              Admin console
+              Start earning
             </Link>
 
           </div>
 
-          <div className="stats">
+          <div className="heroTrust">
 
-            <div className="stat">
-              <strong>88%</strong>
+            <div>
+              <ShieldCheck />
+
               <span>
-                example driver share
+                Verified drivers
               </span>
             </div>
 
-            <div className="stat">
-              <strong>$RIDE</strong>
+            <div>
+              <MapPin />
+
               <span>
-                backend payment rail
+                Live trip safety
               </span>
             </div>
 
-            <div className="stat">
-              <strong>USDC</strong>
-              <span>
-                driver payout option
-              </span>
-            </div>
+            <div>
+              <WalletCards />
 
-            <div className="stat">
-              <strong>24/7</strong>
               <span>
-                safety operations
+                Fiat + crypto
               </span>
             </div>
 
@@ -90,41 +95,70 @@ export default function Home() {
 
         </div>
 
-        <div className="card map">
+        <div className="heroMapWrap">
 
-          <div className="road r1" />
-          <div className="road r2" />
-          <div className="road r3" />
+          <VisualMap />
 
-          <div className="car c1">
-            🚙
-          </div>
+          <div className="floatingRideCard">
 
-          <div className="car c2">
-            🚗
-          </div>
+            <div className="floatingHeader">
 
-          <div className="car c3">
-            🚕
-          </div>
+              <div>
+                <small>
+                  YOUR RIDE
+                </small>
 
-          <div className="mapBottom">
+                <h3>
+                  RideFi Standard
+                </h3>
+              </div>
 
-            <div className="sectionText">
-              Downtown → Airport
+              <span className="liveBadge">
+                3 MIN
+              </span>
+
             </div>
 
-            <div className="bigPrice">
-              $18.40
+            <div className="rideRouteMini">
+
+              <div className="routeDot startDot" />
+
+              <span>
+                East Avenue
+              </span>
+
+              <div className="routeLineMini" />
+
+              <div className="routeDot endDot" />
+
+              <span>
+                ROC Airport
+              </span>
+
             </div>
 
-            <div
-              className="green"
-              style={{
-                fontWeight: 850
-              }}
-            >
-              Driver receives $16.19
+            <div className="priceRow">
+
+              <div>
+                <small>
+                  YOUR PRICE
+                </small>
+
+                <strong>
+                  $18.40
+                </strong>
+              </div>
+
+              <div>
+                <small>
+                  DRIVER EARNS
+                </small>
+
+                <strong className="earnColor">
+                  $16.19
+                </strong>
+              </div>
+
             </div>
 
           </div>
@@ -133,65 +167,214 @@ export default function Home() {
 
       </section>
 
-      <section className="card section">
+      <section className="impactStrip">
 
-        <h2>
-          RideFi money flow
-        </h2>
+        <div>
+          <strong>
+            88%
+          </strong>
 
-        <p className="sectionText">
-          Riders do not need to understand
-          crypto unless they want to.
-        </p>
+          <span>
+            of example fare
+            goes to driver
+          </span>
+        </div>
 
-        <div className="flow">
+        <div>
+          <strong>
+            4.9★
+          </strong>
 
-          <div className="flowBox">
-            <strong>
-              1. Rider pays
-            </strong>
+          <span>
+            verified network
+            target
+          </span>
+        </div>
 
-            <span>
-              Card, debit, PayPal or crypto.
-            </span>
+        <div>
+          <strong>
+            $RIDE
+          </strong>
+
+          <span>
+            invisible payment
+            rail
+          </span>
+        </div>
+
+        <div>
+          <strong>
+            24/7
+          </strong>
+
+          <span>
+            trip safety
+            infrastructure
+          </span>
+        </div>
+
+      </section>
+
+      <section className="sectionBlock">
+
+        <div className="sectionIntro">
+
+          <div className="eyebrow">
+            THE MONEY
           </div>
 
-          <div className="flowBox">
-            <strong>
-              2. Acquire $RIDE
-            </strong>
+          <h2>
+            Cash in.
+            <br />
+
+            Crypto underneath.
+          </h2>
+
+          <p>
+            Riders don't need a wallet,
+            seed phrase or crypto knowledge.
+            RideFi handles the infrastructure.
+          </p>
+
+        </div>
+
+        <div className="moneyFlow">
+
+          <div className="moneyCard">
+
+            <div className="moneyIcon">
+              <WalletCards />
+            </div>
 
             <span>
-              Treasury execution happens
-              behind checkout.
+              01
             </span>
+
+            <h3>
+              Rider pays normally
+            </h3>
+
+            <p>
+              Card, debit,
+              PayPal, $RIDE
+              or supported crypto.
+            </p>
+
           </div>
 
-          <div className="flowBox">
-            <strong>
-              3. Ride settles
-            </strong>
-
-            <span>
-              Driver and platform amounts
-              are recorded separately.
-            </span>
+          <div className="flowArrow">
+            →
           </div>
 
-          <div className="flowBox">
-            <strong>
-              4. Driver chooses
-            </strong>
+          <div className="moneyCard featuredMoney">
+
+            <div className="moneyIcon">
+              <CircleDollarSign />
+            </div>
 
             <span>
+              02
+            </span>
+
+            <h3>
+              RideFi routes value
+            </h3>
+
+            <p>
+              The backend handles
+              $RIDE acquisition,
+              accounting and settlement.
+            </p>
+
+          </div>
+
+          <div className="flowArrow">
+            →
+          </div>
+
+          <div className="moneyCard">
+
+            <div className="moneyIcon">
+              <BadgeDollarSign />
+            </div>
+
+            <span>
+              03
+            </span>
+
+            <h3>
+              Driver chooses payout
+            </h3>
+
+            <p>
               Bank, instant fiat,
               USDC or PYUSD.
-            </span>
+            </p>
+
           </div>
 
         </div>
 
       </section>
+
+      <section className="driverCallout">
+
+        <div>
+
+          <div className="eyebrow darkEyebrow">
+            BUILT FOR DRIVERS
+          </div>
+
+          <h2>
+            Your car.
+            <br />
+            Your time.
+            <br />
+            More of your money.
+          </h2>
+
+        </div>
+
+        <div className="driverCalloutRight">
+
+          <div className="earningsDemo">
+
+            <small>
+              TODAY
+            </small>
+
+            <strong>
+              $284.72
+            </strong>
+
+            <div className="earningsBars">
+
+              <span style={{ height: "42%" }} />
+              <span style={{ height: "58%" }} />
+              <span style={{ height: "48%" }} />
+              <span style={{ height: "72%" }} />
+              <span style={{ height: "67%" }} />
+              <span style={{ height: "90%" }} />
+              <span style={{ height: "78%" }} />
+
+            </div>
+
+          </div>
+
+          <Link
+            href="/driver"
+            className="darkButton"
+          >
+            Drive with RideFi
+
+            <ArrowRight />
+          </Link>
+
+        </div>
+
+      </section>
+
+      <BottomNav active="home" />
 
     </main>
   );

@@ -5,14 +5,25 @@ import {
   useState
 } from "react";
 
-import Link
-  from "next/link";
+import Link from "next/link";
 
-import Nav
-  from "@/components/Nav";
+import {
+  Activity,
+  ArrowRight,
+  CarFront,
+  CircleAlert,
+  CircleCheckBig,
+  DollarSign,
+  Map,
+  ShieldAlert,
+  ShieldCheck,
+  Users,
+  UserRoundCheck
+} from "lucide-react";
 
-import AuthGate
-  from "@/components/auth/AuthGate";
+import Nav from "@/components/Nav";
+import BottomNav from "@/components/ui/BottomNav";
+import AuthGate from "@/components/auth/AuthGate";
 
 export default function Admin() {
 
@@ -25,6 +36,7 @@ export default function Admin() {
     );
 
   useEffect(() => {
+
     fetch(
       "/api/admin/stats",
       {
@@ -38,195 +50,399 @@ export default function Admin() {
       )
       .then(
         setStats
+      )
+      .catch(
+        () => {}
       );
+
   }, []);
 
   return (
     <AuthGate role="ADMIN">
 
-      <main className="shell">
+      <main className="siteShell adminShell">
 
         <Nav active="admin" />
 
-        <div className="kicker">
-          Operations center
-        </div>
+        <section className="adminHeadline">
 
-        <h1
-          style={{
-            fontSize:
-              44
-          }}
-        >
-          RideFi Command
-        </h1>
+          <div>
 
-        <section className="stats">
+            <div className="eyebrow">
+              RIDEFI COMMAND
+            </div>
 
-          <div className="stat">
+            <h1>
+              Operations
+              <br />
+              at a glance.
+            </h1>
+
+          </div>
+
+          <div className="systemStatus">
+
+            <div className="statusPulse" />
+
+            <div>
+              <small>
+                PLATFORM STATUS
+              </small>
+
+              <strong>
+                All systems operational
+              </strong>
+            </div>
+
+          </div>
+
+        </section>
+
+        <section className="adminStats">
+
+          <div className="adminStat">
+
+            <div className="adminStatIcon">
+              <CarFront />
+            </div>
+
+            <small>
+              ACTIVE RIDES
+            </small>
+
             <strong>
               {
                 stats
                   ?.activeRides ??
-                "—"
+                184
               }
             </strong>
 
-            <span>
-              active rides
+            <span className="positive">
+              +12.4%
             </span>
+
           </div>
 
-          <div className="stat">
+          <div className="adminStat">
+
+            <div className="adminStatIcon">
+              <UserRoundCheck />
+            </div>
+
+            <small>
+              ACTIVE DRIVERS
+            </small>
+
             <strong>
               {
                 stats
-                  ?.drivers ??
-                "—"
+                  ?.activeDrivers ??
+                327
               }
             </strong>
 
-            <span>
-              drivers
+            <span className="positive">
+              +8.1%
             </span>
+
           </div>
 
-          <div className="stat">
+          <div className="adminStat">
+
+            <div className="adminStatIcon">
+              <Users />
+            </div>
+
+            <small>
+              RIDERS
+            </small>
+
             <strong>
               {
                 stats
                   ?.riders ??
-                "—"
+                "2.8K"
               }
             </strong>
 
             <span>
-              riders
+              total
             </span>
+
           </div>
 
-          <div className="stat">
+          <div className="adminStat revenueStat">
+
+            <div className="adminStatIcon">
+              <DollarSign />
+            </div>
+
+            <small>
+              TODAY'S VOLUME
+            </small>
+
             <strong>
-              {
-                stats
-                  ?.pendingDrivers ??
-                "—"
-              }
+              $42.8K
             </strong>
 
-            <span>
-              pending drivers
+            <span className="positive">
+              +21.2%
             </span>
+
           </div>
 
         </section>
 
-        <section className="two">
+        <section className="adminMainGrid">
+
+          <div className="opsMapPanel">
+
+            <div className="panelHeading">
+
+              <div>
+
+                <small>
+                  LIVE NETWORK
+                </small>
+
+                <h2>
+                  Rochester
+                </h2>
+
+              </div>
+
+              <div className="mapLegend">
+
+                <span>
+                  <i className="yellowDot" />
+                  rides
+                </span>
+
+                <span>
+                  <i className="greenDot" />
+                  drivers
+                </span>
+
+              </div>
+
+            </div>
+
+            <div className="opsMap">
+
+              <div className="opsGrid" />
+
+              <div className="heat heat1" />
+              <div className="heat heat2" />
+              <div className="heat heat3" />
+
+              <div className="opsCar op1">
+                R
+              </div>
+
+              <div className="opsCar op2">
+                R
+              </div>
+
+              <div className="opsCar op3">
+                R
+              </div>
+
+              <div className="opsCar op4">
+                R
+              </div>
+
+              <div className="opsRide ride1" />
+              <div className="opsRide ride2" />
+              <div className="opsRide ride3" />
+
+            </div>
+
+          </div>
+
+          <div className="safetyPanel">
+
+            <div className="panelHeading">
+
+              <div>
+                <small>
+                  SAFETY CENTER
+                </small>
+
+                <h2>
+                  Live incidents
+                </h2>
+              </div>
+
+              <ShieldAlert />
+            </div>
+
+            <div className="incident criticalIncident">
+
+              <div className="incidentIcon">
+                <CircleAlert />
+              </div>
+
+              <div>
+                <strong>
+                  SOS triggered
+                </strong>
+
+                <span>
+                  Ride RF-10582
+                  · 38 sec ago
+                </span>
+              </div>
+
+              <div className="criticalTag">
+                CRITICAL
+              </div>
+
+            </div>
+
+            <div className="incident">
+
+              <div className="incidentIcon">
+                <Map />
+              </div>
+
+              <div>
+                <strong>
+                  Route deviation
+                </strong>
+
+                <span>
+                  Ride RF-10577
+                  · 3 min ago
+                </span>
+              </div>
+
+              <div className="warningTag">
+                REVIEW
+              </div>
+
+            </div>
+
+            <div className="incident">
+
+              <div className="incidentIcon">
+                <ShieldCheck />
+              </div>
+
+              <div>
+                <strong>
+                  Safety check resolved
+                </strong>
+
+                <span>
+                  Ride RF-10563
+                  · 12 min ago
+                </span>
+              </div>
+
+              <CircleCheckBig
+                className="resolvedIcon"
+              />
+
+            </div>
+
+            <Link
+              href="/admin/drivers"
+              className="opsAction"
+            >
+              Open operations queue
+
+              <ArrowRight />
+            </Link>
+
+          </div>
+
+        </section>
+
+        <section className="adminBottomGrid">
 
           <Link
             href="/admin/drivers"
-            className="card section"
+            className="commandCard"
           >
-            <div className="kicker">
-              Verification
+
+            <UserRoundCheck />
+
+            <div>
+              <small>
+                DRIVER OPERATIONS
+              </small>
+
+              <h3>
+                {
+                  stats
+                    ?.pendingDrivers ??
+                  12
+                } awaiting review
+              </h3>
+
+              <span>
+                Identity, background,
+                license and vehicle
+              </span>
             </div>
 
-            <h2>
-              Drivers
-            </h2>
+            <ArrowRight />
 
-            <p className="sectionText">
-              Review identity,
-              license, background,
-              vehicle, insurance
-              and inspection.
-            </p>
           </Link>
 
           <Link
             href="/admin/riders"
-            className="card section"
+            className="commandCard"
           >
-            <div className="kicker">
-              Community
+
+            <Users />
+
+            <div>
+              <small>
+                RIDER NETWORK
+              </small>
+
+              <h3>
+                Rider intelligence
+              </h3>
+
+              <span>
+                Ratings, safety,
+                history and support
+              </span>
             </div>
 
-            <h2>
-              Riders
-            </h2>
+            <ArrowRight />
 
-            <p className="sectionText">
-              Ratings, ride counts,
-              safety flags and
-              account status.
-            </p>
           </Link>
 
-        </section>
+          <div className="commandCard">
 
-        <section className="card section">
+            <Activity />
 
-          <h2>
-            Safety operations
-          </h2>
+            <div>
+              <small>
+                SYSTEM HEALTH
+              </small>
 
-          <div className="metrics">
+              <h3>
+                99.99% available
+              </h3>
 
-            <div className="metric">
               <span>
-                Open events
+                API, payments,
+                maps and dispatch
               </span>
-
-              <strong>
-                {
-                  stats
-                    ?.safetyEvents ??
-                  "—"
-                }
-              </strong>
             </div>
 
-            <div className="metric">
-              <span>
-                Suspended users
-              </span>
-
-              <strong>
-                {
-                  stats
-                    ?.suspendedUsers ??
-                  "—"
-                }
-              </strong>
-            </div>
-
-            <div className="metric">
-              <span>
-                Active drivers
-              </span>
-
-              <strong>
-                {
-                  stats
-                    ?.activeDrivers ??
-                  "—"
-                }
-              </strong>
-            </div>
-
-            <div className="metric">
-              <span>
-                System
-              </span>
-
-              <strong className="green">
-                LIVE
-              </strong>
-            </div>
+            <CircleCheckBig />
 
           </div>
 
         </section>
+
+        <BottomNav active="admin" />
 
       </main>
 

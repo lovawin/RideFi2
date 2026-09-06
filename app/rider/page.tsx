@@ -4,7 +4,20 @@ import {
   useState
 } from "react";
 
+import {
+  CarFront,
+  ChevronRight,
+  Clock3,
+  LocateFixed,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  WalletCards
+} from "lucide-react";
+
 import Nav from "@/components/Nav";
+import BottomNav from "@/components/ui/BottomNav";
+import VisualMap from "@/components/ui/VisualMap";
 
 type Quote = {
   miles: number;
@@ -17,9 +30,12 @@ type Quote = {
 
 export default function Rider() {
 
-  const [pickup, setPickup] =
+  const [
+    pickup,
+    setPickup
+  ] =
     useState(
-      "Downtown Rochester"
+      "East Avenue"
     );
 
   const [
@@ -30,9 +46,20 @@ export default function Rider() {
       "ROC Airport"
     );
 
-  const [quote, setQuote] =
+  const [
+    quote,
+    setQuote
+  ] =
     useState<Quote | null>(
       null
+    );
+
+  const [
+    selectedRide,
+    setSelectedRide
+  ] =
+    useState(
+      "standard"
     );
 
   async function getQuote() {
@@ -41,7 +68,8 @@ export default function Rider() {
       await fetch(
         "/api/quote",
         {
-          method: "POST",
+          method:
+            "POST",
 
           headers: {
             "Content-Type":
@@ -56,206 +84,301 @@ export default function Rider() {
         }
       );
 
-    const data =
-      await response.json();
-
-    setQuote(data);
+    if (
+      response.ok
+    ) {
+      setQuote(
+        await response.json()
+      );
+    }
   }
 
+  const basePrice =
+    quote?.fareUsd ||
+    18.40;
+
   return (
-    <main className="shell">
+    <main className="siteShell riderShell">
 
       <Nav active="rider" />
 
-      <section className="two">
+      <section className="riderExperience">
 
-        <div className="card panel">
+        <div className="riderMap">
 
-          <div className="kicker">
-            Rider
+          <VisualMap />
+
+          <div className="riderMapTitle">
+            <span>
+              Rochester
+            </span>
+
+            <strong>
+              18 drivers nearby
+            </strong>
           </div>
 
-          <h1>
-            Where to?
-          </h1>
+        </div>
 
-          <div className="form">
+        <aside className="bookingSheet">
 
-            <div className="field">
-              <label>
-                Pickup
-              </label>
+          <div className="bookingHeader">
 
-              <input
-                value={pickup}
-                onChange={
-                  event =>
-                    setPickup(
-                      event.target.value
-                    )
-                }
-              />
+            <div className="eyebrow">
+              <Sparkles size={12} />
+
+              RIDEFI
             </div>
 
-            <div className="field">
-              <label>
-                Destination
-              </label>
+            <h1>
+              Where to?
+            </h1>
 
-              <input
-                value={destination}
-                onChange={
-                  event =>
-                    setDestination(
-                      event.target.value
-                    )
-                }
-              />
+          </div>
+
+          <div className="locationInputs">
+
+            <div className="locationConnector" />
+
+            <div className="locationInput">
+
+              <div className="inputIcon startIcon">
+                <LocateFixed size={17} />
+              </div>
+
+              <div>
+                <small>
+                  PICKUP
+                </small>
+
+                <input
+                  value={pickup}
+                  onChange={
+                    event =>
+                      setPickup(
+                        event.target.value
+                      )
+                  }
+                />
+              </div>
+
             </div>
 
-            <div className="field">
-              <label>
-                Payment
-              </label>
+            <div className="locationInput">
 
-              <select
-                defaultValue="CARD"
-              >
-                <option value="CARD">
-                  Debit / Credit
-                </option>
+              <div className="inputIcon destinationIcon">
+                <MapPin size={17} />
+              </div>
 
-                <option value="PAYPAL">
-                  PayPal
-                </option>
+              <div>
+                <small>
+                  DESTINATION
+                </small>
 
-                <option value="CRYPTO">
-                  Crypto
-                </option>
+                <input
+                  value={destination}
+                  onChange={
+                    event =>
+                      setDestination(
+                        event.target.value
+                      )
+                  }
+                />
+              </div>
 
-                <option value="RIDE">
-                  $RIDE Balance
-                </option>
-              </select>
             </div>
+
+          </div>
+
+          <button
+            className="quoteButton"
+            onClick={
+              getQuote
+            }
+          >
+            Calculate trip
+          </button>
+
+          <div className="rideChoices">
 
             <button
-              className="primary"
-              onClick={getQuote}
+              className={
+                selectedRide ===
+                "standard"
+                  ? "rideChoice selected"
+                  : "rideChoice"
+              }
+              onClick={
+                () =>
+                  setSelectedRide(
+                    "standard"
+                  )
+              }
             >
-              Get ride price
+
+              <div className="rideVehicle">
+                <CarFront />
+              </div>
+
+              <div className="rideChoiceInfo">
+
+                <strong>
+                  RideFi
+                </strong>
+
+                <span>
+                  3 min · 4 seats
+                </span>
+
+              </div>
+
+              <div className="rideChoicePrice">
+
+                <strong>
+                  $
+                  {
+                    basePrice
+                      .toFixed(2)
+                  }
+                </strong>
+
+                <span>
+                  best value
+                </span>
+
+              </div>
+
+            </button>
+
+            <button
+              className={
+                selectedRide ===
+                "comfort"
+                  ? "rideChoice selected"
+                  : "rideChoice"
+              }
+              onClick={
+                () =>
+                  setSelectedRide(
+                    "comfort"
+                  )
+              }
+            >
+
+              <div className="rideVehicle comfortVehicle">
+                <CarFront />
+              </div>
+
+              <div className="rideChoiceInfo">
+
+                <strong>
+                  RideFi Comfort
+                </strong>
+
+                <span>
+                  6 min · newer cars
+                </span>
+
+              </div>
+
+              <div className="rideChoicePrice">
+
+                <strong>
+                  $
+                  {
+                    (
+                      basePrice *
+                      1.24
+                    ).toFixed(2)
+                  }
+                </strong>
+
+              </div>
+
             </button>
 
           </div>
 
-          {
-            quote &&
-            (
-              <>
-                <div className="metrics">
+          <div className="paymentBar">
 
-                  <div className="metric">
-                    <span>
-                      Fare
-                    </span>
+            <div>
+              <WalletCards size={17} />
 
-                    <strong>
-                      $
-                      {
-                        quote
-                          .fareUsd
-                          .toFixed(2)
-                      }
-                    </strong>
-                  </div>
-
-                  <div className="metric">
-                    <span>
-                      Distance
-                    </span>
-
-                    <strong>
-                      {quote.miles} mi
-                    </strong>
-                  </div>
-
-                  <div className="metric">
-                    <span>
-                      ETA
-                    </span>
-
-                    <strong>
-                      {quote.minutes} min
-                    </strong>
-                  </div>
-
-                  <div className="metric">
-                    <span>
-                      Driver gets
-                    </span>
-
-                    <strong className="green">
-                      $
-                      {
-                        quote
-                          .driverEarningsUsd
-                          .toFixed(2)
-                      }
-                    </strong>
-                  </div>
-
-                </div>
-
-                <div className="actions">
-
-                  <button
-                    className="primary"
-                  >
-                    Request RideFi
-                  </button>
-
-                  <button
-                    className="secondary"
-                  >
-                    Schedule
-                  </button>
-
-                </div>
-              </>
-            )
-          }
-
-        </div>
-
-        <div className="card map">
-
-          <div className="road r1" />
-          <div className="road r2" />
-          <div className="road r3" />
-
-          <div className="car c1">
-            🚙
-          </div>
-
-          <div className="car c2">
-            🚗
-          </div>
-
-          <div className="mapBottom">
-            <strong>
-              3D map engine
-            </strong>
-
-            <div className="sectionText">
-              Real Mapbox routing,
-              traffic and moving cars
-              plug into this surface.
+              <span>
+                Visa •••• 4242
+              </span>
             </div>
+
+            <ChevronRight size={17} />
+
           </div>
 
-        </div>
+          <button className="requestRideButton">
+
+            <div>
+              <strong>
+                Request RideFi
+              </strong>
+
+              <span>
+                Driver keeps most
+                of the fare
+              </span>
+            </div>
+
+            <ChevronRight />
+
+          </button>
+
+          <div className="riderSafety">
+
+            <ShieldCheck />
+
+            <div>
+              <strong>
+                Ride protected
+              </strong>
+
+              <span>
+                PIN verification,
+                route monitoring
+                and trip sharing
+              </span>
+            </div>
+
+          </div>
+
+          <div className="tripFacts">
+
+            <div>
+              <Clock3 />
+
+              <span>
+                {
+                  quote?.minutes ||
+                  18
+                } min
+              </span>
+            </div>
+
+            <div>
+              <MapPin />
+
+              <span>
+                {
+                  quote?.miles ||
+                  8.4
+                } mi
+              </span>
+            </div>
+
+          </div>
+
+        </aside>
 
       </section>
+
+      <BottomNav active="rider" />
 
     </main>
   );

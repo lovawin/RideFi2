@@ -4,214 +4,257 @@ import {
   useState
 } from "react";
 
+import Link from "next/link";
+
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  Banknote,
+  CarFront,
+  ChevronRight,
+  CircleCheckBig,
+  Clock3,
+  Gauge,
+  MapPin,
+  ShieldCheck,
+  Star,
+  Wallet
+} from "lucide-react";
+
 import Nav from "@/components/Nav";
+import BottomNav from "@/components/ui/BottomNav";
+import VisualMap from "@/components/ui/VisualMap";
 
 export default function Driver() {
 
-  const [online, setOnline] =
+  const [
+    online,
+    setOnline
+  ] =
     useState(false);
 
-  const [payout, setPayout] =
-    useState("USDC");
-
   return (
-    <main className="shell">
+    <main className="siteShell driverShell">
 
       <Nav active="driver" />
 
-      <section className="two">
+      <section className="driverHero">
 
-        <div className="card panel">
+        <div className="driverDashboard">
 
-          <div className="kicker">
-            Driver console
+          <div className="driverTopRow">
+
+            <div>
+
+              <div className="eyebrow">
+                DRIVER MODE
+              </div>
+
+              <h1>
+                Good morning,
+                <br />
+                Chris.
+              </h1>
+
+            </div>
+
+            <button
+              className={
+                online
+                  ? "onlineSwitch online"
+                  : "onlineSwitch"
+              }
+              onClick={
+                () =>
+                  setOnline(
+                    !online
+                  )
+              }
+            >
+              <span />
+
+              {
+                online
+                  ? "ONLINE"
+                  : "GO ONLINE"
+              }
+            </button>
+
           </div>
 
-          <h1
-            style={{
-              fontSize: 46,
-              marginBottom: 5
-            }}
-          >
-            {
-              online
-                ? "ONLINE"
-                : "OFFLINE"
-            }
-          </h1>
+          <div className="earningsHero">
 
-          <p className="sectionText">
-            Verified drivers receive
-            nearby ride requests.
-          </p>
+            <div>
 
-          <button
-            className="primary"
-            style={{
-              width: "100%"
-            }}
-            onClick={
-              () =>
-                setOnline(
-                  previous =>
-                    !previous
-                )
-            }
-          >
-            {
-              online
-                ? "GO OFFLINE"
-                : "GO ONLINE"
-            }
-          </button>
+              <small>
+                TODAY'S EARNINGS
+              </small>
 
-          <div className="stats">
-
-            <div className="stat">
               <strong>
-                88%
+                $284.72
               </strong>
 
               <span>
-                fare share
+                +18.4% vs yesterday
               </span>
+
             </div>
 
-            <div className="stat">
+            <div className="miniChart">
+
+              <i style={{ height: "30%" }} />
+              <i style={{ height: "48%" }} />
+              <i style={{ height: "41%" }} />
+              <i style={{ height: "63%" }} />
+              <i style={{ height: "57%" }} />
+              <i style={{ height: "84%" }} />
+              <i style={{ height: "95%" }} />
+
+            </div>
+
+          </div>
+
+          <div className="driverMetrics">
+
+            <div className="driverMetric">
+
+              <div className="metricIcon">
+                <Gauge />
+              </div>
+
+              <span>
+                Online
+              </span>
+
+              <strong>
+                6h 42m
+              </strong>
+
+            </div>
+
+            <div className="driverMetric">
+
+              <div className="metricIcon">
+                <CarFront />
+              </div>
+
+              <span>
+                Trips
+              </span>
+
+              <strong>
+                17
+              </strong>
+
+            </div>
+
+            <div className="driverMetric">
+
+              <div className="metricIcon">
+                <Star />
+              </div>
+
+              <span>
+                Rating
+              </span>
+
               <strong>
                 4.98
               </strong>
 
-              <span>
-                driver rating
-              </span>
             </div>
 
-            <div className="stat">
+            <div className="driverMetric">
+
+              <div className="metricIcon">
+                <BadgeDollarSign />
+              </div>
+
+              <span>
+                Avg/hr
+              </span>
+
               <strong>
-                12
+                $42.49
               </strong>
 
-              <span>
-                rides today
-              </span>
             </div>
-
-            <div className="stat">
-              <strong>
-                $128
-              </strong>
-
-              <span>
-                today
-              </span>
-            </div>
-
-          </div>
-
-          <div
-            className="field"
-            style={{
-              marginTop: 15
-            }}
-          >
-
-            <label>
-              Payout preference
-            </label>
-
-            <select
-              value={payout}
-              onChange={
-                event =>
-                  setPayout(
-                    event.target.value
-                  )
-              }
-            >
-              <option>
-                USDC
-              </option>
-
-              <option>
-                PYUSD
-              </option>
-
-              <option>
-                Bank
-              </option>
-
-              <option>
-                Instant Fiat
-              </option>
-            </select>
 
           </div>
 
         </div>
 
-        <div className="card panel">
+        <div className="driverMapCard">
 
-          <div className="kicker">
-            Incoming ride
+          <VisualMap compact />
+
+          <div className="demandPill">
+            HIGH DEMAND
           </div>
 
-          <h2>
-            Downtown → Airport
-          </h2>
+          <div className="driverOffer">
 
-          <div className="metrics">
+            <div className="offerTop">
 
-            <div className="metric">
+              <div>
+                <small>
+                  NEW REQUEST
+                </small>
+
+                <strong>
+                  $22.84
+                </strong>
+              </div>
+
+              <div className="offerTimer">
+                14
+              </div>
+
+            </div>
+
+            <div className="offerRoute">
+
+              <div>
+                <MapPin size={16} />
+
+                <span>
+                  East Ave
+                </span>
+              </div>
+
+              <div>
+                <ArrowRight size={14} />
+              </div>
+
+              <div>
+                <MapPin size={16} />
+
+                <span>
+                  ROC Airport
+                </span>
+              </div>
+
+            </div>
+
+            <div className="offerFacts">
+
               <span>
-                Pickup
+                <Clock3 size={14} />
+                21 min
+              </span>
+
+              <span>
+                9.1 mi
               </span>
 
               <strong>
-                1.2 mi
+                you keep ~$20.10
               </strong>
+
             </div>
 
-            <div className="metric">
-              <span>
-                Trip
-              </span>
-
-              <strong>
-                8.4 mi
-              </strong>
-            </div>
-
-            <div className="metric">
-              <span>
-                Time
-              </span>
-
-              <strong>
-                18 min
-              </strong>
-            </div>
-
-            <div className="metric">
-              <span>
-                You earn
-              </span>
-
-              <strong className="green">
-                $16.19
-              </strong>
-            </div>
-
-          </div>
-
-          <div className="actions">
-
-            <button className="primary">
-              Accept ride
-            </button>
-
-            <button className="secondary">
-              Decline
+            <button>
+              Accept trip
             </button>
 
           </div>
@@ -219,6 +262,136 @@ export default function Driver() {
         </div>
 
       </section>
+
+      <section className="driverLowerGrid">
+
+        <div className="premiumPanel">
+
+          <div className="panelTitle">
+
+            <div>
+              <small>
+                PAYOUT
+              </small>
+
+              <h3>
+                Your money,
+                your choice.
+              </h3>
+            </div>
+
+            <Wallet />
+          </div>
+
+          <div className="payoutOptions">
+
+            <div className="payoutOption active">
+
+              <CircleCheckBig />
+
+              <div>
+                <strong>
+                  USDC
+                </strong>
+
+                <span>
+                  instant
+                </span>
+              </div>
+
+            </div>
+
+            <div className="payoutOption">
+
+              <Banknote />
+
+              <div>
+                <strong>
+                  Bank
+                </strong>
+
+                <span>
+                  1–2 days
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="premiumPanel">
+
+          <div className="panelTitle">
+
+            <div>
+              <small>
+                VERIFICATION
+              </small>
+
+              <h3>
+                Driver status
+              </h3>
+            </div>
+
+            <ShieldCheck />
+          </div>
+
+          <div className="verificationList">
+
+            <div>
+              <CircleCheckBig />
+
+              <span>
+                Identity
+              </span>
+
+              <strong>
+                Verified
+              </strong>
+            </div>
+
+            <div>
+              <CircleCheckBig />
+
+              <span>
+                License
+              </span>
+
+              <strong>
+                Verified
+              </strong>
+            </div>
+
+            <div>
+              <CircleCheckBig />
+
+              <span>
+                Insurance
+              </span>
+
+              <strong>
+                Verified
+              </strong>
+            </div>
+
+          </div>
+
+          <Link
+            href="/driver/profile"
+            className="panelLink"
+          >
+            View driver profile
+
+            <ChevronRight />
+          </Link>
+
+        </div>
+
+      </section>
+
+      <BottomNav active="driver" />
 
     </main>
   );

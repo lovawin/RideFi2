@@ -1,101 +1,93 @@
-import Link
-  from "next/link";
+import Link from "next/link";
+
+import {
+  ArrowUpRight
+} from "lucide-react";
 
 export default function Nav({
   active = "home"
 }: {
   active?: string;
 }) {
-  const links = [
-    [
-      "home",
-      "/",
-      "Home"
-    ],
-
-    [
-      "rider",
-      "/rider",
-      "Rider"
-    ],
-
-    [
-      "driver",
-      "/driver",
-      "Driver"
-    ],
-
-    [
-      "admin",
-      "/admin",
-      "Admin"
-    ]
-  ];
-
   return (
-    <header className="nav">
+    <header className="topNav">
 
       <Link
         href="/"
-        className="brand"
+        className="ridefiBrand"
       >
-        <div className="logo">
-          R
-        </div>
+        <img
+          src="/ridefi/ridefi-mark.svg"
+          alt="RideFi"
+        />
 
         <div>
-          <div className="brandName">
+          <strong>
             RideFi
-          </div>
+          </strong>
 
-          <div className="brandSub">
-            Move cheaper. Earn more.
-          </div>
+          <span>
+            MOVE DIFFERENT
+          </span>
         </div>
       </Link>
 
-      <nav className="navLinks">
+      <nav className="desktopNavLinks">
 
-        {
-          links.map(
-            ([
-              key,
-              href,
-              label
-            ]) => (
-              <Link
-                key={key}
+        <Link
+          href="/rider"
+          className={
+            active === "rider"
+              ? "active"
+              : ""
+          }
+        >
+          Ride
+        </Link>
 
-                href={href}
+        <Link
+          href="/driver"
+          className={
+            active === "driver"
+              ? "active"
+              : ""
+          }
+        >
+          Drive
+        </Link>
 
-                className={
-                  active ===
-                  key
-                    ? "navPill active"
-                    : "navPill"
-                }
-              >
-                {label}
-              </Link>
-            )
-          )
-        }
+        <Link
+          href="/admin"
+          className={
+            active === "admin"
+              ? "active"
+              : ""
+          }
+        >
+          Operations
+        </Link>
+
+      </nav>
+
+      <div className="navActions">
 
         <Link
           href="/auth/login"
-          className="navPill"
+          className="navTextLink"
         >
           Sign in
         </Link>
 
         <Link
           href="/auth/signup"
-          className="navPill"
+          className="navJoin"
         >
-          Join
+          Join RideFi
+
+          <ArrowUpRight size={15} />
         </Link>
 
-      </nav>
+      </div>
 
     </header>
   );
