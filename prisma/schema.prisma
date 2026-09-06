@@ -1,0 +1,380 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  RIDER
+  DRIVER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  SUSPENDED
+  BANNED
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum RideStatus {
+  REQUESTED
+  MATCHING
+  ACCEPTED
+  DRIVER_ARRIVING
+  DRIVER_WAITING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum PaymentMethod {
+  CARD
+  DEBIT
+  PAYPAL
+  CRYPTO
+  RIDE_BALANCE
+}
+
+enum PayoutMethod {
+  BANK
+  INSTANT_FIAT
+  USDC
+  PYUSD
+}
+
+enum SafetySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id              String      @id @default(cuid())
+  role            UserRole
+  status          UserStatus  @default(PENDING)
+
+  firstName       String
+  lastName        String
+
+  email           String?     @unique
+  phone           String?     @unique
+  passwordHash    String?
+
+  avatarUrl       String?
+
+  rating          Float       @default(5)
+  ratingCount     Int         @default(0)
+  ridesCompleted  Int         @default(0)
+
+  identityStatus  VerificationStatus @default(PENDING)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  riderProfile    RiderProfile?
+  driverProfile   DriverProfile?
+
+  riderRides      Ride[]      @relation("RiderRides")
+  driverRides     Ride[]      @relation("DriverRides")
+
+  ratingsGiven    Rating[]    @relation("RatingsGiven")
+  ratingsReceived Rating[]    @relation("RatingsReceived")
+
+  safetyEvents    SafetyEvent[]
+  paymentMethods  StoredPaymentMethod[]
+
+  wallet          Wallet?
+  notifications   Notification[]
+}
+
+model RiderProfile {
+  userId          String  @id
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emergencyName   String?
+  emergencyPhone  String?
+
+  riderPinEnabled Boolean @default(true)
+}
+
+model DriverProfile {
+  userId              String @id
+  user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  online              Boolean @default(false)
+  acceptingRides      Boolean @default(false)
+
+  backgroundStatus    VerificationStatus @default(PENDING)
+  licenseStatus       VerificationStatus @default(PENDING)
+  insuranceStatus     VerificationStatus @default(PENDING)
+  vehicleStatus       VerificationStatus @default(PENDING)
+  inspectionStatus    VerificationStatus @default(PENDING)
+
+  payoutMethod        PayoutMethod @default(BANK)
+  payoutDestination   String?
+
+  lifetimeEarningsUsd Decimal @default(0) @db.Decimal(18,2)
+
+  currentLat          Float?
+  currentLng          Float?
+  lastLocationAt      DateTime?
+
+  license             DriverLicense?
+  vehicles            Vehicle[]
+  documents           DriverDocument[]
+  payouts             Payout[]
+}
+
+model DriverLicense {
+  id             String @id @default(cuid())
+
+  driverId       String @unique
+  driver         DriverProfile @relation(fields: [driverId], references: [userId], onDelete: Cascade)
+
+  licenseNumber  String
+  state          String
+  expirationDate DateTime
+
+  frontImageUrl  String?
+  backImageUrl   String?
+
+  status         VerificationStatus @default(PENDING)
+  verifiedAt     DateTime?
+}
+
+model DriverDocument {
+  id         String @id @default(cuid())
+
+  driverId   String
+  driver     DriverProfile @relation(fields: [driverId], references: [userId], onDelete: Cascade)
+
+  type       String
+  fileUrl    String
+
+  status     VerificationStatus @default(PENDING)
+  expiresAt  DateTime?
+  reviewedAt DateTime?
+
+  createdAt  DateTime @default(now())
+}
+
+model Vehicle {
+  id                 String @id @default(cuid())
+
+  driverId           String
+  driver             DriverProfile @relation(fields: [driverId], references: [userId], onDelete: Cascade)
+
+  make               String
+  model              String
+  year               Int
+  color              String
+
+  plate              String
+  state              String
+
+  vinLast6           String?
+
+  seats              Int @default(4)
+  category           String @default("STANDARD")
+
+  registrationStatus VerificationStatus @default(PENDING)
+  insuranceStatus    VerificationStatus @default(PENDING)
+  inspectionStatus   VerificationStatus @default(PENDING)
+
+  active             Boolean @default(false)
+}
+
+model Ride {
+  id                  String @id @default(cuid())
+
+  riderId             String
+  rider               User   @relation("RiderRides", fields: [riderId], references: [id])
+
+  driverId            String?
+  driver              User?  @relation("DriverRides", fields: [driverId], references: [id])
+
+  status              RideStatus @default(REQUESTED)
+
+  pickupLabel         String
+  pickupLat           Float
+  pickupLng           Float
+
+  destinationLabel    String
+  destinationLat      Float
+  destinationLng      Float
+
+  routeDistanceMiles  Float
+  routeDurationMin    Int
+
+  pricingMultiplier   Float @default(1)
+
+  fareUsd             Decimal @db.Decimal(18,2)
+  driverEarningsUsd   Decimal @db.Decimal(18,2)
+  platformFeeUsd      Decimal @db.Decimal(18,2)
+
+  rideTokens          Decimal @db.Decimal(36,18)
+
+  paymentMethod       PaymentMethod
+
+  riderPin            String?
+
+  acceptedAt          DateTime?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  cancelledAt         DateTime?
+
+  createdAt           DateTime @default(now())
+
+  ledgerEntries       LedgerEntry[]
+  ratings             Rating[]
+  safetyEvents        SafetyEvent[]
+}
+
+model LedgerEntry {
+  id                String @id @default(cuid())
+
+  rideId            String?
+  ride              Ride?  @relation(fields: [rideId], references: [id])
+
+  userId            String?
+
+  type              String
+
+  usdAmount         Decimal? @db.Decimal(18,2)
+  rideAmount        Decimal? @db.Decimal(36,18)
+  stableAmount      Decimal? @db.Decimal(36,18)
+
+  asset             String?
+  externalReference String?
+
+  metadata          Json?
+
+  createdAt         DateTime @default(now())
+
+  @@index([rideId])
+  @@index([userId])
+}
+
+model Wallet {
+  id          String @id @default(cuid())
+
+  userId      String @unique
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  custodial   Boolean @default(true)
+
+  address     String?
+
+  rideBalance Decimal @default(0) @db.Decimal(36,18)
+  usdcBalance Decimal @default(0) @db.Decimal(36,18)
+}
+
+model StoredPaymentMethod {
+  id          String @id @default(cuid())
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider    String
+  providerRef String
+
+  brand       String?
+  last4       String?
+
+  isDefault   Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+}
+
+model Payout {
+  id          String @id @default(cuid())
+
+  driverId    String
+  driver      DriverProfile @relation(fields: [driverId], references: [userId])
+
+  method      PayoutMethod
+
+  amountUsd   Decimal @db.Decimal(18,2)
+
+  asset       String?
+  destination String?
+
+  status      String @default("PENDING")
+  externalRef String?
+
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+}
+
+model Rating {
+  id         String @id @default(cuid())
+
+  rideId     String
+  ride       Ride @relation(fields: [rideId], references: [id])
+
+  fromUserId String
+  fromUser   User @relation("RatingsGiven", fields: [fromUserId], references: [id])
+
+  toUserId   String
+  toUser     User @relation("RatingsReceived", fields: [toUserId], references: [id])
+
+  stars      Int
+  comment    String?
+
+  createdAt  DateTime @default(now())
+}
+
+model SafetyEvent {
+  id          String @id @default(cuid())
+
+  rideId      String?
+  ride        Ride? @relation(fields: [rideId], references: [id])
+
+  userId      String?
+  user        User? @relation(fields: [userId], references: [id])
+
+  kind        String
+  severity    SafetySeverity
+
+  description String?
+  metadata    Json?
+
+  resolved    Boolean @default(false)
+  resolvedAt  DateTime?
+
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String @id @default(cuid())
+
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      String
+  title     String
+  body      String
+
+  read      Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model PlatformSetting {
+  key       String @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
