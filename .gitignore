@@ -5,3 +5,16 @@ node_modules
 *.log
 .DS_Store
 prisma/dev.db
+
+.env
+.env.*
+node_modules/
+.next/
+uploads/
+wallets/
+*.pem
+*.key
+*.db
+*.sqlite
+*.sqlite3
+*.log
